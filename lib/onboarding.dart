@@ -16,7 +16,7 @@ class OnboardingPage extends StatelessWidget {
         pages: [
           // 첫 번째 페이지
           PageViewModel(
-            title: "친밀감",
+            title: "아직도!",
             body: "평소 이웃과 인사는 하고 살고 계신가요?",
             image: Image(
               image: AssetImage("lib/assets/onboarding1.jpeg"),
@@ -38,8 +38,8 @@ class OnboardingPage extends StatelessWidget {
           ),
           // 두 번째 페이지
           PageViewModel(
-            title: "표현력 있고 유연한 UI",
-            body: "이제는 I'm Here로 이웃과 소통해보세요!",
+            title: "이제는!",
+            body: "I'm Here로 이웃과 소통해보세요!",
             image: Image(
               image: AssetImage("lib/assets/onboarding2.jpeg"),
               width: 600,
@@ -48,7 +48,7 @@ class OnboardingPage extends StatelessWidget {
             ),
             decoration: PageDecoration(
               titleTextStyle: TextStyle(
-                color: Colors.indigo,
+                color: Colors.lime,
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
               ),
