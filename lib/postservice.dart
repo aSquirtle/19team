@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -52,49 +53,65 @@ class HomeSecondPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final authService = context.read<AuthService>();
+    final hereService = context.read<HereService>();
     final user = authService.currentUser()!;
+
     // return Consumer<PostService>(builder: (context, postService, child) {
-    return Consumer<HereService>(builder: (context, hereService, child) {
-      // List<Post> postList = hereService.hereList;
-      return Scaffold(
-        appBar: AppBar(
-          title: Text('게시판'),
-        ),
-        body: ListView.builder(
-          itemCount: postList.length,
-          itemBuilder: (BuildContext context, int index) {
-            var _post = postList[index];
-            return Column(
-              children: [
-                ListTile(
-                  title: Text(_post.postTitle),
-                  leading: CircleAvatar(
-                      child: Text(
-                    '${user.email}',
-                    style: TextStyle(fontSize: 12),
-                  )),
-                  onTap: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (BuildContext context) {
-                      return PostDetailPage(
-                        post: _post,
-                      );
-                    }));
+    return Consumer<HereService>(
+      builder: (context, hereService, child) {
+        // List<Post> postList = hereService.hereList;
+        // List<Post> postList = hereService.hereList;
+        return Scaffold(
+          appBar: AppBar(
+            title: Text('게시판'),
+          ),
+          body: FutureBuilder<QuerySnapshot>(
+              future: hereService.read(user.uid),
+              builder: (context, snapshot) {
+                final documents = snapshot.data?.docs ?? [];
+                print(documents);
+                return ListView.builder(
+                  itemCount: documents.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    // var _post = postList[index];
+                    var document = documents[index];
+                    final doc = documents[index];
+                    return Column(
+                      children: [
+                        ListTile(
+                          title: Text('document.uid'),
+                          // title: Text(documents.uid),
+                          leading: CircleAvatar(
+                              child: Text(
+                            '${user.email}',
+                            style: TextStyle(fontSize: 12),
+                          )),
+                          onTap: () {
+                            Navigator.push(context, MaterialPageRoute(
+                                builder: (BuildContext context) {
+                              return PostDetailPage(
+                                // post: _post,
+                                post: Post('', '', []),
+                              );
+                            }));
+                          },
+                        ),
+                        Divider(thickness: 1),
+                      ],
+                    );
                   },
-                ),
-                Divider(thickness: 1),
-              ],
-            );
-          },
-        ),
-        floatingActionButton: FloatingActionButton(
+                );
+              }),
+          floatingActionButton: FloatingActionButton(
             onPressed: () {
               Navigator.push(
                   context, MaterialPageRoute(builder: (_) => PostPage()));
             },
-            child: Icon(Icons.post_add)),
-      );
-    });
+            child: Icon(Icons.post_add),
+          ),
+        );
+      },
+    );
   }
 }
 
@@ -115,6 +132,7 @@ class PostDetailPage extends StatelessWidget {
     return Consumer<PostService>(builder: (context, postService, child) {
       //List<Comment> commentList = commentService.commentList;
       final authService = context.read<AuthService>();
+      final hereService = context.read<HereService>();
       final user = authService.currentUser()!;
       return Scaffold(
         appBar: AppBar(
@@ -126,10 +144,10 @@ class PostDetailPage extends StatelessWidget {
             child: SingleChildScrollView(
               child: Expanded(
                 child: FutureBuilder<QuerySnapshot>(
-                  future: HereService.read(user.uid),
+                  future: hereService.read(user.uid),
                   builder: (context, snapshot) {
                     final documents = snapshot.data?.docs ?? [];
-                    Column(
+                    return Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -181,13 +199,9 @@ class PostDetailPage extends StatelessWidget {
                                           icon: Icon(CupertinoIcons.delete),
                                           onPressed: () {
                                             // 삭제 버튼 클릭시
-                                            HereService.delete(doc.id);
+                                            hereService.delete(doc.id);
                                           },
                                         ),
-                                        onTap: () {
-                                          // 아이템 클릭하여 isDone 업데이트
-                                          HereService.update(doc.id, !isDone);
-                                        },
                                       );
                                     }),
                               ),
@@ -218,9 +232,13 @@ class PostPage extends StatefulWidget {
 class _PostPageState extends State<PostPage> {
   TextEditingController titleController = TextEditingController();
   TextEditingController textController = TextEditingController();
+  TextEditingController jobController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    final authService = context.read<AuthService>();
+    final hereService = context.read<HereService>();
+    User user = authService.currentUser()!;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -254,11 +272,14 @@ class _PostPageState extends State<PostPage> {
               Center(
                 child: ElevatedButton(
                     onPressed: () {
-                      String postTitle = titleController.text;
-                      String postContent = textController.text;
-                      PostService postService = context.read<PostService>();
-                      postService.createPost(postTitle, postContent);
-                      Navigator.pop(context);
+                      // String postTitle = titleController.text;
+                      // String postContent = textController.text;
+                      // PostService postService = context.read<PostService>();
+                      // postService.createPost(postTitle, postContent);
+                      // Navigator.pop(context);
+                      if (jobController.text.isNotEmpty) {
+                        hereService.create(jobController.text, user.uid);
+                      }
                     },
                     child: Text('작성완료')),
               )
