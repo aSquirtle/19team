@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-
 import 'package:introduction_screen/introduction_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'loginpage.dart';
 
 // SharedPreferences 인스턴스를 어디서든 접근 가능하도록 전역 변수로 선언
 late SharedPreferences prefs;
@@ -90,38 +90,9 @@ class OnboardingPage extends StatelessWidget {
           // Done 클릭시 페이지 이동
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => HomePage()),
+            MaterialPageRoute(builder: (context) => LoginPage()),
           );
         },
-      ),
-    );
-  }
-}
-
-class HomePage extends StatelessWidget {
-  const HomePage({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("HomePage"),
-        actions: [
-          // 삭제 버튼
-          IconButton(
-            onPressed: () {
-              // SharedPreferences에 저장된 모든 데이터 삭제
-              prefs.clear();
-            },
-            icon: Icon(Icons.delete),
-          )
-        ],
-      ),
-      body: Center(
-        child: Text(
-          "환영합니다.",
-          style: TextStyle(fontSize: 28),
-        ),
       ),
     );
   }

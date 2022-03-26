@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "13313138766",
+    "project_id": "i-m-here-c76d8",
+    "storage_bucket": "i-m-here-c76d8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:13313138766:android:6def3d3c96b791e72a631f",
+        "android_client_info": {
+          "package_name": "com.example.imhere"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "13313138766-t7hnfc4h5barsh63jn0n751iigud73na.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC7Ys18BZhMCPaW1kFJthipjEAnkBjDqTU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "13313138766-t7hnfc4h5barsh63jn0n751iigud73na.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
