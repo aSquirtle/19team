@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class HereService extends ChangeNotifier {
-  final hereCollection = FirebaseFirestore.instance.collection('here');
+  final hereCollection = FirebaseFirestore.instance.collection('bucket');
 
   Future<QuerySnapshot> read(String uid) async {
     // 내 hereList 가져오기

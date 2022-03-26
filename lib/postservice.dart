@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -61,39 +63,54 @@ class HomeSecondPage extends StatelessWidget {
       builder: (context, hereService, child) {
         // List<Post> postList = hereService.hereList;
         // List<Post> postList = hereService.hereList;
+        // print(FirebaseFirestore.instance.collection('bucket').get());
         return Scaffold(
           appBar: AppBar(
             title: Text('게시판'),
           ),
           body: FutureBuilder<QuerySnapshot>(
-              future: hereService.read(user.uid),
-              builder: (context, snapshot) {
-                final documents = snapshot.data?.docs ?? [];
-                print(documents);
+            future: FirebaseFirestore.instance.collection('bucket').get(),
+            builder: (context, snapshot) {
+              final documents = snapshot.data?.docs ?? [];
+
+              if (snapshot.hasData) {
                 return ListView.builder(
                   itemCount: documents.length,
                   itemBuilder: (BuildContext context, int index) {
                     // var _post = postList[index];
                     var document = documents[index];
                     final doc = documents[index];
+
+                    QueryDocumentSnapshot snapshot = documents[index];
+                    Map<String, dynamic> jsonmap = jsonDecode(
+                      jsonEncode(
+                        snapshot.data(),
+                      ),
+                    );
+
                     return Column(
                       children: [
                         ListTile(
-                          title: Text('document.uid'),
-                          // title: Text(documents.uid),
+                          title: Text('job : ${jsonmap['job']}'),
+                          subtitle: Text('uid : ${jsonmap['uid']}'),
                           leading: CircleAvatar(
-                              child: Text(
-                            '${user.email}',
-                            style: TextStyle(fontSize: 12),
-                          )),
+                            child: Text(
+                              '${user.email}',
+                              style: TextStyle(fontSize: 12),
+                            ),
+                          ),
                           onTap: () {
-                            Navigator.push(context, MaterialPageRoute(
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
                                 builder: (BuildContext context) {
-                              return PostDetailPage(
-                                // post: _post,
-                                post: Post('', '', []),
-                              );
-                            }));
+                                  return PostDetailPage(
+                                    // post: _post,
+                                    post: Post('', '', []),
+                                  );
+                                },
+                              ),
+                            );
                           },
                         ),
                         Divider(thickness: 1),
@@ -101,11 +118,18 @@ class HomeSecondPage extends StatelessWidget {
                     );
                   },
                 );
-              }),
+              } else
+                return CircularProgressIndicator();
+            },
+          ),
           floatingActionButton: FloatingActionButton(
             onPressed: () {
               Navigator.push(
-                  context, MaterialPageRoute(builder: (_) => PostPage()));
+                context,
+                MaterialPageRoute(
+                  builder: (_) => PostPage(),
+                ),
+              );
             },
             child: Icon(Icons.post_add),
           ),
@@ -153,14 +177,9 @@ class PostDetailPage extends StatelessWidget {
                       children: [
                         Row(
                           children: [
-                            Container(
-                                width: 48,
-                                height: 48,
-                                child:
-                                    CircleAvatar(child: Text("${user.email}"))),
+                            Container(width: 48, height: 48, child: CircleAvatar(child: Text("${user.email}"))),
                             SizedBox(width: 16),
-                            Text(post.postTitle,
-                                style: TextStyle(fontSize: 24)),
+                            Text(post.postTitle, style: TextStyle(fontSize: 24)),
                             Spacer(),
                             Text(
                               'YYYY/MM/DD \n HH:MM',
@@ -173,8 +192,7 @@ class PostDetailPage extends StatelessWidget {
                         Divider(thickness: 2),
                         Text(
                           '댓글 ${post.comments.length}개',
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold),
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                         ),
                         post.comments.isEmpty
                             ? Text('아직 댓글이 없습니다.')
@@ -184,8 +202,7 @@ class PostDetailPage extends StatelessWidget {
                                     physics: NeverScrollableScrollPhysics(),
                                     itemCount: post.comments.length,
                                     //itemCount: commentList.length,
-                                    itemBuilder:
-                                        (BuildContext context, int index) {
+                                    itemBuilder: (BuildContext context, int index) {
                                       final doc = documents[index];
                                       String job = doc.get('job');
                                       bool isDone = doc.get('isDone');
@@ -193,8 +210,7 @@ class PostDetailPage extends StatelessWidget {
                                       var _comment = post.comments[index];
                                       return ListTile(
                                         title: Text(_comment.commentContent),
-                                        leading: CircleAvatar(
-                                            child: Text(_comment.commentId)),
+                                        leading: CircleAvatar(child: Text(_comment.commentId)),
                                         trailing: IconButton(
                                           icon: Icon(CupertinoIcons.delete),
                                           onPressed: () {
